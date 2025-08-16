@@ -1,0 +1,9 @@
+package com.mehdihosseini.framework.basicframework.thirdParty.externalOrganizationInfo.dao;
+
+import com.mehdihosseini.framework.basicframework.service.BasicInfrastructureService;
+import com.mehdihosseini.framework.basicframework.thirdParty.externalOrganizationInfo.ExternalOrganizationInfoEntity;
+
+public interface ExternalOrganizationInfoInfrastructureService extends BasicInfrastructureService<ExternalOrganizationInfoEntity, String> {
+
+    ExternalOrganizationInfoEntity findAllByExternalOrganizationName(String extOrgName);
+}

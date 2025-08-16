@@ -1,0 +1,8 @@
+package com.mehdihosseini.framework.basicframework.thirdParty.restService.apiService.requestHeaderApiConfig.dao;
+
+
+import com.mehdihosseini.framework.basicframework.service.BasicInfrastructureService;
+import com.mehdihosseini.framework.basicframework.thirdParty.restService.apiService.requestHeaderApiConfig.RequestHeaderApiConfigEntity;
+
+public interface RequestHeaderApiConfigInfrastructureService extends BasicInfrastructureService<RequestHeaderApiConfigEntity, String> {
+}

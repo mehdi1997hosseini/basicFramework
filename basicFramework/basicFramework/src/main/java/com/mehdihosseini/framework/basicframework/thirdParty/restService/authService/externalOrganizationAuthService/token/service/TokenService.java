@@ -1,0 +1,10 @@
+package com.mehdihosseini.framework.basicframework.thirdParty.restService.authService.externalOrganizationAuthService.token.service;
+
+import com.mehdihosseini.framework.basicframework.thirdParty.restService.authService.externalOrganizationAuthService.ExternalOrganizationAuthServiceEntity;
+import com.mehdihosseini.framework.basicframework.thirdParty.restService.authService.externalOrganizationAuthService.token.ExternalTokenDto;
+
+public interface TokenService {
+    public ExternalTokenDto sendRestRequestForToken(ExternalOrganizationAuthServiceEntity extOrgEntity);
+
+    public ExternalTokenDto sendSoapRequestForToken(ExternalOrganizationAuthServiceEntity extOrgEntity);
+}

@@ -1,0 +1,9 @@
+package com.mehdihosseini.framework.basicframework.thirdParty.restService.apiService.externalOrganizationApiService.dao;
+
+import com.mehdihosseini.framework.basicframework.repository.BasicRepository;
+import com.mehdihosseini.framework.basicframework.thirdParty.restService.apiService.externalOrganizationApiService.ExternalOrganizationApiServiceEntity;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ExternalOrganizationApiServiceRepository extends BasicRepository<ExternalOrganizationApiServiceEntity, String> {
+}
