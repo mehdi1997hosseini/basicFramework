@@ -1,12 +1,15 @@
 package ir.mehdihosseini.basicframework.entity;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
 import lombok.*;
 
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.UUID;
 
 /**
  * -----------------------------------------------------------------------------
@@ -52,9 +55,53 @@ import java.io.Serializable;
 @MappedSuperclass
 public abstract class BasicEntity<ID> implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+//    @GeneratedValue(strategy = GenerationType.UUID)
     private ID id;
     private Boolean isDelete = false;
+
+    @PrePersist
+    private void generateIdIfNeeded() {
+        if (id == null) {
+            Class<?> idType = getIdType();
+            if (idType.equals(String.class)) {
+                id = (ID) UUID.randomUUID().toString();
+            } else if (idType.equals(Long.class)) {
+                id = (ID) Long.valueOf(UUID.randomUUID().getMostSignificantBits() ^ UUID.randomUUID().getLeastSignificantBits());
+            } else if (idType.equals(Integer.class)) {
+                id = (ID) Integer.valueOf((int) UUID.randomUUID().getMostSignificantBits() & 0xFFFFFFFF);
+            } else
+                throw new IllegalArgumentException("type of primary key is not valid ... checking the primary key...");
+        }
+    }
+
+    private Class<?> getIdType() {
+        Type superclass = getClass().getGenericSuperclass();
+        if (superclass instanceof ParameterizedType parameterizedType) {
+            Type[] typeArguments = parameterizedType.getActualTypeArguments();
+            if (typeArguments.length > 0) {
+                return (Class<?>) typeArguments[0];
+            }
+        }
+        return String.class;
+    }
+
+    @JsonIgnore
+    public Class<?> getEntityClass() {
+        return this.getClass();
+    }
+    @JsonIgnore
+    public BasicEntity<ID> getParentClass(){
+        return this;
+    }
+    @JsonIgnore
+    public String getNameFieldParentId() {
+        return "id";
+    }
+    @JsonIgnore
+    public String getNameFiledIsDelete(){
+        return "isDelete";
+    }
+
 
 }
 

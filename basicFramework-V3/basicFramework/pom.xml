@@ -6,14 +6,13 @@
 	<parent>
 		<groupId>ir.mehdiHosseini</groupId>
 		<artifactId>BOM</artifactId>
-		<version>3.0.1</version>
+		<version>3.0.2</version>
 	</parent>
 
 	<artifactId>basicFramework</artifactId>
 	<version>3.0.1</version>
 	<name>basicFramework-V3</name>
 	<description>basicFramework for version 3 spring boot and in the Java range 17 to ... </description>
-
 
 	<dependencyManagement>
 		<dependencies>
@@ -42,5 +41,29 @@
 		</dependency>
 	</dependencies>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>ir.mehdihosseini.basicframework.BasicFrameworkApplication</mainClass>
+				</configuration>
+				<executions>
+					<execution>
+							<id>executable-jar</id>
+							<phase>install</phase>
+							<goals>
+								<goal>repackage</goal>
+							</goals>
+
+							<configuration>
+								<executable>true</executable>
+							</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

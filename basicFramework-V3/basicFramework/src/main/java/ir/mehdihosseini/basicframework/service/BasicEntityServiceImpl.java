@@ -5,26 +5,18 @@ import ir.mehdihosseini.basicframework.repository.BasicRepository;
 import ir.mehdihosseini.basicframework.service.entity.BasicEntityService;
 import ir.mehdihosseini.basicframework.utils.BeanUtilsCustom;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaUpdate;
-import jakarta.persistence.criteria.Root;
 
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 
 @MappedSuperclass
 public class BasicEntityServiceImpl<E extends BasicEntity<ID>, ID, R extends BasicRepository<E, ID>> extends BasicEntityManager implements BasicEntityService<E, ID> {
-    protected Class<E> entityClass;
     protected final R repository;
+    private E entity;
 
-    private BasicEntityServiceImpl(R repository) {
+    protected BasicEntityServiceImpl(R repository) {
         this.repository = repository;
-    }
-
-    @SuppressWarnings("unchecked")
-    public BasicEntityServiceImpl(Class<E> entityClass, R repository) {
-        this(repository);
-        this.entityClass = entityClass;
     }
 
     @Override
@@ -68,12 +60,17 @@ public class BasicEntityServiceImpl<E extends BasicEntity<ID>, ID, R extends Bas
 
     @Override
     public Boolean softDeleteById(ID id) {
-        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
-        CriteriaUpdate<E> update = cb.createCriteriaUpdate(entityClass);
-        Root<E> root = update.from(entityClass);
-        update.set("isDelete", Boolean.TRUE);
-        update.where(cb.equal(root.get("id"), id));
-        return getEntityManager().createQuery(update).executeUpdate() > 0;
+        return repository.softDeleteById(id) > 0;
     }
+
+//    @Override
+//    public Boolean softDeleteById(ID id) {
+//        Class<?> entityClass = entity.getEntityClass();
+//        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+//        CriteriaUpdate<?> update = cb.createCriteriaUpdate(entityClass);
+//        update.set("isDelete", Boolean.TRUE);
+//        update.where(cb.equal((Expression<?>) entity.getParentClass().getId(), id));
+//        return getEntityManager().createQuery(update).executeUpdate() > 0;
+//    }
 
 }
