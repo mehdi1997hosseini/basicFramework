@@ -10,12 +10,16 @@ ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} spring-boot-basic-framework-v3-1.0.jar
 
 # app start in port - when using start app to other port
-EXPOSE 8080
+#EXPOSE 8080
 
+# profile variable config
+ENV PROFILE=dev
 # database variable config
-ENV USERNAME=${USERNAME}
-ENV PASSWORD=${PASSWORD}
-ENV PROFILE=${PROFILE}
+ENV DB_NET=${DB_NET}
+ENV DB_PORT=${DB_PORT}
+ENV DB_NAME=${DB_NAME}
+ENV DB_USERNAME=${USERNAME}
+ENV DB_PASSWORD=${PASSWORD}
 
 VOLUME /log/springBootV3
 
