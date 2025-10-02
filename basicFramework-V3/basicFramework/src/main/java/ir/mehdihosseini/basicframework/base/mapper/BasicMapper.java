@@ -6,14 +6,14 @@ import java.util.List;
  * @Param E is Entity that extend BasicEntity
  * @Param D id dto class that implements Serializable
  */
-public interface BasicMapper<E, D> {
+public interface BasicMapper<ENTITY, DTO> {
 
-    E toEntity(D dto);
+    ENTITY toEntity(DTO dto);
 
-    List<E> toEntity(List<D> listDto);
+    List<ENTITY> toEntity(List<DTO> listDto);
 
-    D toDto(E entity);
+    DTO toDto(ENTITY entity);
 
-    List<D> toDto(List<E> listEntity);
+    List<DTO> toDto(List<ENTITY> listEntity);
 
 }

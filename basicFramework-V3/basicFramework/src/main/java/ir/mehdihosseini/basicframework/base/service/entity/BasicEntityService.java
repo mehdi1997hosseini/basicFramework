@@ -4,19 +4,33 @@ import ir.mehdihosseini.basicframework.base.entity.BasicEntity;
 
 import java.util.List;
 
-public interface BasicEntityService<E extends BasicEntity<ID>, ID> {
+/**
+ * اینترفیس پایه‌ای برای سرویس‌های مرتبط با Entityها.
+ * شامل عملیات پایه‌ای مانند save, saveOrUpdate, findAll, findById و softDeleteById می‌باشد.
+ * متد getById قدیمی است و بهتر است از findById استفاده شود.
+ * <p></p>
+ * Base interface for services related to Entities.
+ * Provides basic operations such as save, saveOrUpdate, findAll, findById, and softDeleteById.
+ * The getById method is deprecated; it is recommended to use findById instead.
+ *
+ * @param <ENTITY> نوع Entity
+ * @param <ID>     نوع شناسه Entity
+ */
+public interface BasicEntityService<ENTITY extends BasicEntity<ID>, ID> {
+
     @Deprecated
-    E getById(ID id);
+    ENTITY getById(ID id);
 
-    List<E> findById(ID id);
+    List<ENTITY> findById(ID id);
 
-    List<E> findAll();
+    List<ENTITY> findAll();
 
-    E saveOrUpdate(ID id, E entity);
+    ENTITY saveOrUpdate(ID id, ENTITY entity);
 
-    E save(E entity);
+    ENTITY save(ENTITY entity);
 
-    List<E> saveList(List<E> entities);
+    List<ENTITY> saveList(List<ENTITY> entities);
 
     Boolean softDeleteById(ID id);
+
 }

@@ -51,7 +51,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @ToString
 @MappedSuperclass
-abstract class BasicAuditableEntity<ID> extends BasicEntity<ID> {
+public class BasicAuditEntity<ID> extends BasicEntity<ID> {
 
     @CreatedBy
     @Column(name = "created_by")
@@ -113,7 +113,7 @@ abstract class BasicAuditableEntity<ID> extends BasicEntity<ID> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        BasicAuditableEntity<?> that = (BasicAuditableEntity<?>) o;
+        BasicAuditEntity<?> that = (BasicAuditEntity<?>) o;
         return getId() != null && Objects.equals(getId(), that.getId());
     }
 

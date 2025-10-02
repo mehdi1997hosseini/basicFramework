@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class DurationAndInstantUtils {
+
     private DurationAndInstantUtils() {
     }
 
@@ -28,16 +29,7 @@ public class DurationAndInstantUtils {
     }
 
     public static Duration getDurationOfTimeByTimeUnitType(long expiresIn, TimeUnitType timeUnit) {
-        return switch (timeUnit) {
-            case NANOSECONDS -> Duration.ofNanos(expiresIn);
-            case MICROSECONDS -> Duration.ofNanos(expiresIn * 1000);
-            case MILLISECONDS -> Duration.ofMillis(expiresIn);
-            case SECONDS, CUSTOM_SECONDS -> Duration.ofSeconds(expiresIn);
-            case MINUTES, CUSTOM_MINUTES -> Duration.ofMinutes(expiresIn);
-            case HOURS, CUSTOM_HOURS -> Duration.ofHours(expiresIn);
-            case DAYS -> Duration.ofDays(expiresIn);
-            default -> throw new IllegalArgumentException("Unsupported TimeUnit: " + timeUnit);
-        };
+        return getTimeUnitType(timeUnit, expiresIn);
     }
 
     /**
@@ -64,7 +56,6 @@ public class DurationAndInstantUtils {
         return Duration.between(now, futureInstant);
     }
 
-
     public static Instant convertToInstant(long value, TimeUnitType unit) {
         return switch (unit) {
             case NANOSECONDS -> Instant.ofEpochSecond(0, value);
@@ -79,7 +70,11 @@ public class DurationAndInstantUtils {
     }
 
     public static Duration convertToDuration(long value, TimeUnitType unit) {
-        return switch (unit) {
+        return getTimeUnitType(unit, value);
+    }
+
+    private static Duration getTimeUnitType(TimeUnitType timeUnit, long value) {
+        return switch (timeUnit) {
             case NANOSECONDS -> Duration.ofNanos(value);
             case MICROSECONDS -> Duration.ofNanos(value * 1000);
             case MILLISECONDS -> Duration.ofMillis(value);
@@ -87,7 +82,8 @@ public class DurationAndInstantUtils {
             case MINUTES, CUSTOM_MINUTES -> Duration.ofMinutes(value);
             case HOURS, CUSTOM_HOURS -> Duration.ofHours(value);
             case DAYS -> Duration.ofDays(value);
-            default -> throw new IllegalArgumentException("Unsupported time unit: " + unit);
+            default -> throw new IllegalArgumentException("Unsupported TimeUnit: " + timeUnit);
         };
     }
+
 }
