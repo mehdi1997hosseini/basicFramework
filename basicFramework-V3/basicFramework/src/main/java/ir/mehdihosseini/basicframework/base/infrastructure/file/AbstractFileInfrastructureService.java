@@ -83,7 +83,7 @@ public abstract class AbstractFileInfrastructureService<ENTITY extends BasicEnti
     public ENTITY save(ENTITY entity) {
         String typeName = getEntityClass().getSuperclass().getGenericSuperclass().getTypeName();
         System.out.println(" getEntityClass().getSuperclass().getGenericSuperclass().getTypeName()" + typeName);
-        entity.setId((ID) NumberUtils.generateUniqueNumber());
+        entity.setId((ID) NumberUtils.generateUniqueLongNumber());
         try {
             addToFile(objectMapper.writeValueAsString(entity));
             return entity;

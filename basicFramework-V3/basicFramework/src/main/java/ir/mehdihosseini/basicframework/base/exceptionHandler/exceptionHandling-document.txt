@@ -1,0 +1,67 @@
+مرحله ۱: تعریف هدف و محدوده (Goal & Scope)
+هدف اصلی: همه خطاها در برنامه (Runtime, Validation, زیرساخت)
+ در قالب یکسان و قابل ترجمه به چند زبان برگردانده شوند.
+
+محدوده:
+
+شامل چه خطاهایی هست (Runtime, Validation, HTTP errors)
+
+چه خطاهایی خارج هستند (مثلاً System exit, native exceptions که نمی‌توان کنترل کرد)
+
+معیار موفقیت: همه خطاها با قالب یکسان و i18n پاسخ داده شوند.
+
+--------
+هدف ما این است که خطاها در یک قالب استاندارد و چندزبانه در اختیار
+کاربر و توسعه‌دهنده قرار گیرد تا یکپارچگی، توسعه‌پذیری و maintainability (نگهداشت پذیری) سیستم حفظ شود.
+
+*********
+مرحله ۲: تحلیل موجودیت‌ها و سناریوها (Use-case & Entity Analysis)
+Entities: هر موجودیت یا ماژول خطاهای خودش را دارد و پیام‌ها کنار کلاس‌ها قرار می‌گیرند.
+
+سناریوهای کلیدی:
+
+Dev mode: تغییر پیام‌ها و تست سریع بدون rebuild
+
+Prod mode: load پیام‌ها از JAR / dependency
+
+Fallback: پیام گمشده → default language
+
+زیرساخت: خطاهای Spring MVC / DispatcherServlet نیز هندل شوند
+
+--------
+هر موجودیت پیام‌های خود را دارد و
+ سیستم زیرساخت پیام‌های عمومی را فراهم می‌کند. این باعث modularity و توسعه‌پذیری می‌شود.
+
+ *********
+ مرحله ۳: طراحی معماری (Architecture Design)
+
+ لایه‌ها:
+
+ Base Exception Handler (generic + extensible)
+
+ Entity-specific Exception Handler (extends base)
+
+ Message Loader (i18n) → scan فایل‌ها کنار کلاس‌ها و داخل JAR
+
+ Response Builder → قالب واحد پاسخ با code, message, detail, timestamp, URI
+
+ قوانین طراحی:
+
+ SOLID: Open-Closed برای موجودیت‌ها
+
+ DRY: جلوگیری از duplicate code
+
+ Reusability: زیرساخت یکبار نوشته شود و در پروژه‌های دیگر قابل استفاده باشد
+
+ Modularity: توسعه‌دهنده موجودیت جدید فقط پیام‌ها و Handler خودش را اضافه کند
+
+ Fallback Strategy: وقتی کلید یا زبان موجود نیست، default پیام برگردد و لاگ ثبت شود
+
+ --------
+
+ معماری ما لایه‌ای و modular است، لایه پایه قابلیت reuse در پروژه‌های
+ دیگر را دارد و هر موجودیت مستقل پیام‌ها و handler خود را دارد.
+
+ *********
+
+

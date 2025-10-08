@@ -1,0 +1,4 @@
+بر این اساس ما مدیریت تمام خطا ها را برای موجودیت ها
+باید درون همان موجودیت بر اساس الگوی های موجود در فایل های "exceptionHandling-document"
+و "implement-contract-for-exception-handling" و "pattern-config-exception-handling" توضیح داده شده
+ عمل کنیم تا ساختار یکنواخت به صورت کامل رعایت شود

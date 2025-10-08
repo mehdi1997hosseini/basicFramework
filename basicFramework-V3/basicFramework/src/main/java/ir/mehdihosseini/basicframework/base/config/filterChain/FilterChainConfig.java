@@ -24,6 +24,8 @@ public class FilterChainConfig implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
+        System.out.println("FilterChainConfig.doFilter");
+
         if (HttpMethod.OPTIONS.name().equals(request.getMethod()) || HttpMethod.HEAD.name().equals(request.getMethod()) ||
                 HttpMethod.PATCH.name().equals(request.getMethod()) || HttpMethod.TRACE.name().equals(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);

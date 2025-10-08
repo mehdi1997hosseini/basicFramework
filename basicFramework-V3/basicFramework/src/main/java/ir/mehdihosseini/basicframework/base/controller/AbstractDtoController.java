@@ -1,6 +1,7 @@
 package ir.mehdihosseini.basicframework.base.controller;
 
 import ir.mehdihosseini.basicframework.base.service.dto.BasicDtoService;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +34,7 @@ public abstract class AbstractDtoController<DTO, SERVICE extends BasicDtoService
      *
      * @return list of all DTOs
      */
+    @Description(value = "find all category")
     @GetMapping
     public ResponseEntity<?> findAll() {
         return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
