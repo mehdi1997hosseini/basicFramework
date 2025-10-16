@@ -1,8 +1,9 @@
-package ir.mehdihosseini.basicframework.base.config.filterChain;
+package ir.mehdihosseini.basicframework.base.config.filterChain.request;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
@@ -12,7 +13,7 @@ import java.io.IOException;
 
 @Component("coreFilter")
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class FilterChainConfig implements Filter {
+public class CoreFilterChainConfig implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -32,10 +33,13 @@ public class FilterChainConfig implements Filter {
         } else {
             filterChain.doFilter(request, response);
         }
+        LocaleContextHolder.getLocale();
+
     }
 
     @Override
     public void destroy() {
         Filter.super.destroy();
     }
+
 }

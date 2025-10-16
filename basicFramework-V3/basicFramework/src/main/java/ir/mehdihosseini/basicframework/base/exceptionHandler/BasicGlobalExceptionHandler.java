@@ -4,7 +4,7 @@ import ir.mehdihosseini.basicframework.base.exceptionHandler.exception.AppRunTim
 import ir.mehdihosseini.basicframework.base.exceptionHandler.exception.AppSqlException;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.lang.ResponseMessageDto;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicRequestExceptionType;
-import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicSystemExceptionType;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicInternalSystemExceptionType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -96,7 +96,7 @@ public class BasicGlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGenericException(Exception ex, HttpServletRequest request) {
-        BasicSystemExceptionType internalServerError = BasicSystemExceptionType.INTERNAL_SERVER_ERROR;
+        BasicInternalSystemExceptionType internalServerError = BasicInternalSystemExceptionType.INTERNAL_SERVER_ERROR;
         List<ResponseMessageDto> responseMessage = dynamicMessageSource
                 .getMessageResponse(internalServerError.getMessageKey(), (Object) null);
 

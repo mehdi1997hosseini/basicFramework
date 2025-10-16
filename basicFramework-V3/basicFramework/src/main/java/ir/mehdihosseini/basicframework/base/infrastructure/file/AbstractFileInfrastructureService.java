@@ -3,6 +3,8 @@ package ir.mehdihosseini.basicframework.base.infrastructure.file;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.mehdihosseini.basicframework.base.entity.BasicEntity;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.exception.AppRunTimeException;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicInternalSystemExceptionType;
 import ir.mehdihosseini.basicframework.base.utils.NumberUtils;
 import org.springframework.context.annotation.Lazy;
 
@@ -66,7 +68,8 @@ public abstract class AbstractFileInfrastructureService<ENTITY extends BasicEnti
 
             System.out.println("file exists");
         } catch (IOException e) {
-            throw new RuntimeException("Failed to initialize file" + e.getMessage());
+            throw new AppRunTimeException(BasicInternalSystemExceptionType.INFRASTRUCTURE_FILE_PROCESS, "Failed to initialize file");
+//            throw new RuntimeException("Failed to initialize file" + e.getMessage());
         }
     }
 
@@ -88,7 +91,7 @@ public abstract class AbstractFileInfrastructureService<ENTITY extends BasicEnti
             addToFile(objectMapper.writeValueAsString(entity));
             return entity;
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new AppRunTimeException(BasicInternalSystemExceptionType.INFRASTRUCTURE_FILE_PROCESS_ADD_IN_FILE, e.getMessage());
         }
     }
 
@@ -112,7 +115,7 @@ public abstract class AbstractFileInfrastructureService<ENTITY extends BasicEnti
             }
             return result;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new AppRunTimeException(BasicInternalSystemExceptionType.INFRASTRUCTURE_FILE_PROCESS_FIND_ALL_FROM_FILE, e.getMessage());
         }
     }
 
@@ -140,7 +143,7 @@ public abstract class AbstractFileInfrastructureService<ENTITY extends BasicEnti
                 }
                 Files.write(filePath, lines, StandardOpenOption.TRUNCATE_EXISTING);
             } catch (IOException ex) {
-                throw new RuntimeException("Failed to soft delete entity: " + ex.getMessage(), ex);
+                throw new AppRunTimeException(BasicInternalSystemExceptionType.INFRASTRUCTURE_FILE_PROCESS_DELETE_LINE_FROM_FILE, "Failed to soft delete entity: " + ex.getMessage());
             }
         }
 

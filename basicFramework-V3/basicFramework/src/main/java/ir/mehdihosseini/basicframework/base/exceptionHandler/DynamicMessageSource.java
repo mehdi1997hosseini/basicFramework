@@ -4,7 +4,7 @@ import ir.mehdihosseini.basicframework.base.exceptionHandler.exception.AppRunTim
 import ir.mehdihosseini.basicframework.base.exceptionHandler.lang.ExceptionLanguagePropertiesConfig;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.lang.ResponseLanguageExceptionType;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.lang.ResponseMessageDto;
-import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicSystemExceptionType;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicInternalSystemExceptionType;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -66,7 +66,7 @@ public class DynamicMessageSource {
                             arr[0] = key;
                             arr[1] = value;
                             arr[2] = filename;
-                            throw new AppRunTimeException(BasicSystemExceptionType.EXCEPTION_HANDLING_MESSAGE_KEY_IS_DUPLICATED, arr);
+                            throw new AppRunTimeException(BasicInternalSystemExceptionType.EXCEPTION_HANDLING_MESSAGE_KEY_IS_DUPLICATED, arr);
                         }
                         v.put(locale, value);
                         return v;
@@ -95,9 +95,9 @@ public class DynamicMessageSource {
         try {
             return MessageFormat.format(template, args);
         } catch (IllegalArgumentException e) {
-            throw new AppRunTimeException(BasicSystemExceptionType.INTERNAL_SERVER_ERROR, "خطا در فرمت پیام.");
+            throw new AppRunTimeException(BasicInternalSystemExceptionType.INTERNAL_SERVER_ERROR, "خطا در فرمت پیام.");
         } catch (Exception e) {
-            throw new AppRunTimeException(BasicSystemExceptionType.INTERNAL_SERVER_ERROR, "خطای ناشناخته در ساخت پیام خطا.");
+            throw new AppRunTimeException(BasicInternalSystemExceptionType.INTERNAL_SERVER_ERROR, "خطای ناشناخته در ساخت پیام خطا.");
         }
     }
 
@@ -127,9 +127,9 @@ public class DynamicMessageSource {
         try {
             return MessageFormat.format(messageResponse, digits);
         } catch (IllegalArgumentException e) {
-            throw new AppRunTimeException(BasicSystemExceptionType.INTERNAL_SERVER_ERROR, "خطا در فرمت پیام.");
+            throw new AppRunTimeException(BasicInternalSystemExceptionType.INTERNAL_SERVER_ERROR, "خطا در فرمت پیام.");
         } catch (Exception e) {
-            throw new AppRunTimeException(BasicSystemExceptionType.INTERNAL_SERVER_ERROR, "خطای ناشناخته در ساخت پیام خطا.");
+            throw new AppRunTimeException(BasicInternalSystemExceptionType.INTERNAL_SERVER_ERROR, "خطای ناشناخته در ساخت پیام خطا.");
         }
     }
 

@@ -7,6 +7,7 @@ public enum BasicRequestExceptionType implements BasicSpecificationException {
     REQUEST_FAILED("error.request-failed", "401"),
     ENTERED_VALUE_IS_NOT_VALID("error.enteredValueIsNotValid", "402"),
     NO_RESOURCE_FOUND("error.resourceNotFoundRequest", "403"),
+    FILE_NOT_FOUND_BY_FILE_NAME("basic.system.error.fileNotFoundByFileName", "404"),
     PAGE_NOT_FOUND("error.pageNotFound", "404"),
     ;
 

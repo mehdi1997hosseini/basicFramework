@@ -58,7 +58,7 @@ public abstract class AbstractEntityService<ENTITY extends BasicEntity<ID>, ID ,
         if (!entities.isEmpty()) {
             return repository.saveAll(entities);
         }
-        return null;
+        return List.of();
     }
 
     @Override
