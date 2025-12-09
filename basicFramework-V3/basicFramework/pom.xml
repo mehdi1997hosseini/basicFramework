@@ -1,69 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>ir.mehdiHosseini</groupId>
-		<artifactId>BOM</artifactId>
-		<version>3.0.2</version>
-	</parent>
+    <parent>
+        <groupId>ir.mehdiHosseini</groupId>
+        <artifactId>BOM</artifactId>
+        <version>3.0.2</version>
+    </parent>
 
-	<artifactId>basicFramework</artifactId>
-	<version>3.0.1</version>
-	<name>basicFramework-V3</name>
-	<description>basicFramework for version 3 spring boot and in the Java range 17 to ... </description>
+    <artifactId>basicFramework</artifactId>
+    <version>3.0.1</version>
+    <name>basicFramework-V3</name>
+    <description>basicFramework for version 3 spring boot and in the Java range 17 to ...</description>
+    <properties>
+        <spring.security.taglibs.version>6.5.5</spring.security.taglibs.version>
+    </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.github.eloyzone</groupId>
+                <artifactId>jalali-calendar</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-configuration-processor</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-starter-security</artifactId>-->
+<!--                <version>${spring.boot.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.security</groupId>-->
+<!--                <artifactId>spring-security-taglibs</artifactId>-->
+<!--                <version>${spring.security.taglibs.version}</version>-->
+<!--            </dependency>-->
+        </dependencies>
+    </dependencyManagement>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.github.eloyzone</groupId>
-				<artifactId>jalali-calendar</artifactId>
-				<version>1.0.0</version>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-configuration-processor</artifactId>
-				<version>${spring.boot.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.github.eloyzone</groupId>
+            <artifactId>jalali-calendar</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-security</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.security</groupId>-->
+<!--            <artifactId>spring-security-taglibs</artifactId>-->
+<!--        </dependency>-->
+    </dependencies>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.github.eloyzone</groupId>
-			<artifactId>jalali-calendar</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<optional>true</optional>
-		</dependency>
-	</dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>ir.mehdihosseini.basicframework.BasicFrameworkApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>executable-jar</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <executable>true</executable>
+                        </configuration>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<mainClass>ir.mehdihosseini.basicframework.BasicFrameworkApplication</mainClass>
-				</configuration>
-				<executions>
-					<execution>
-							<id>executable-jar</id>
-							<phase>install</phase>
-							<goals>
-								<goal>repackage</goal>
-							</goals>
-
-							<configuration>
-								<executable>true</executable>
-							</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -75,6 +95,6 @@
                 </includes>
             </resource>
         </resources>
-	</build>
+    </build>
 
 </project>

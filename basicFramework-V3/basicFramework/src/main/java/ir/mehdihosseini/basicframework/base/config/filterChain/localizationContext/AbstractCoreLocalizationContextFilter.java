@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@Component("localizationContext")
-public class CoreLocalizationContextFilter implements Filter {
+@Component
+public abstract class AbstractCoreLocalizationContextFilter implements Filter  {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -22,7 +22,7 @@ public class CoreLocalizationContextFilter implements Filter {
                 BasicTenantContext.setTenant(tenantHeader);
             }
 
-            doFilter(servletRequest, servletResponse, filterChain);
+            filterChain.doFilter(servletRequest, servletResponse);
 
         } finally {
             BasicTenantContext.clearTenant();
