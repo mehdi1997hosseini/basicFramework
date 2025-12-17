@@ -1,5 +1,6 @@
 package ir.mehdihosseini.basicframework.base.elasticsearch.config;
 
+import ir.mehdihosseini.basicframework.base.config.properties.ManagerPropertiesConfig;
 import org.apache.http.conn.ssl.TrustAllStrategy;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.context.annotation.Configuration;
@@ -13,18 +14,18 @@ import javax.net.ssl.SSLContext;
 @EnableElasticsearchRepositories(basePackages = "ir.mehdihosseini.basicframework.base.elasticsearch")
 public class CoreElasticSearchConfig extends ElasticsearchConfiguration {
 
-    private final ElasticSearchPropertyConfig elkConfig;
+    private final ManagerPropertiesConfig managerPropertiesConfig;
 
-    public CoreElasticSearchConfig(ElasticSearchPropertyConfig elkConfig) {
-        this.elkConfig = elkConfig;
+    public CoreElasticSearchConfig(ManagerPropertiesConfig elkConfig) {
+        this.managerPropertiesConfig = elkConfig;
     }
 
     @Override
     public ClientConfiguration clientConfiguration() {
         return ClientConfiguration.builder()
-                .connectedTo(elkConfig.getHost() + ":" + elkConfig.getPort())
+                .connectedTo(managerPropertiesConfig.getElasticSearch().getHost() + ":" + managerPropertiesConfig.getElasticSearch().getPort())
                 .withSocketTimeout(3000000)
-                .withConnectTimeout(elkConfig.getConnectionTimeOut())
+                .withConnectTimeout(managerPropertiesConfig.getElasticSearch().getConnectionTimeOut())
                 .build();
     }
 
