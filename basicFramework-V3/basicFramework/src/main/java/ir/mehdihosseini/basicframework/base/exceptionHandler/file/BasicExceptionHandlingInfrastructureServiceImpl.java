@@ -1,9 +1,9 @@
-package ir.mehdihosseini.basicframework.base.exceptionHandler.file.dao;
+package ir.mehdihosseini.basicframework.base.exceptionHandler.file;
 
 import ir.mehdihosseini.basicframework.base.config.properties.ManagerPropertiesConfig;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.ExceptionHandlingModelResponse;
-import ir.mehdihosseini.basicframework.base.exceptionHandler.dao.MaintenanceMessageExceptionDao;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.exception.AppRunTimeException;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.infrastrucure.BasicExceptionHandlingInfrastructureService;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.lang.ResponseLanguageExceptionType;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicInternalSystemExceptionType;
 import jakarta.annotation.PostConstruct;
@@ -23,12 +23,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @ConditionalOnProperty(prefix = "manager.exception-handling", name = "type", havingValue = "PROPERTIES_FILE")
-public class MaintenanceFileDaoImpl implements MaintenanceMessageExceptionDao {
+public class BasicExceptionHandlingInfrastructureServiceImpl implements BasicExceptionHandlingInfrastructureService {
 
-    private final Map<String, Map<ResponseLanguageExceptionType, ExceptionHandlingModelResponse>> maintenanceData = new ConcurrentHashMap<>();
+    private final Map<String, Map<ResponseLanguageExceptionType, ExceptionHandlingModelResponse>> cache = new ConcurrentHashMap<>();
     private final ManagerPropertiesConfig managerPropertiesConfig;
 
-    public MaintenanceFileDaoImpl(ManagerPropertiesConfig managerPropertiesConfig) {
+    public BasicExceptionHandlingInfrastructureServiceImpl(ManagerPropertiesConfig managerPropertiesConfig) {
         this.managerPropertiesConfig = managerPropertiesConfig;
     }
 
@@ -54,10 +54,11 @@ public class MaintenanceFileDaoImpl implements MaintenanceMessageExceptionDao {
 
             for (String key : props.stringPropertyNames()) {
                 String value = props.getProperty(key);
-                maintenanceData.compute(key, (k, v) -> {
+                cache.compute(key, (k, v) -> {
                     if (v == null) {
                         Map<ResponseLanguageExceptionType, ExceptionHandlingModelResponse> map = new HashMap<>();
-                        map.put(localLang, new ExceptionHandlingModelResponse(value, key));
+                        // change and add language to the object
+                        map.put(localLang, new ExceptionHandlingModelResponse(value, key,localLang.getLanguage()));
                         return map;
                     } else {
                         if (v.containsKey(localLang)) {
@@ -67,7 +68,7 @@ public class MaintenanceFileDaoImpl implements MaintenanceMessageExceptionDao {
                             arr[2] = filename;
                             throw new AppRunTimeException(BasicInternalSystemExceptionType.EXCEPTION_HANDLING_MESSAGE_KEY_IS_DUPLICATED, arr);
                         }
-                        v.put(localLang, new ExceptionHandlingModelResponse(value, key));
+                        v.put(localLang, new ExceptionHandlingModelResponse(value, key , localLang.getLanguage()));
                         return v;
                     }
                 });
@@ -87,13 +88,7 @@ public class MaintenanceFileDaoImpl implements MaintenanceMessageExceptionDao {
     }
 
     @Override
-    public Map<ResponseLanguageExceptionType, ExceptionHandlingModelResponse> findAllResponseExceptionByKey(String key) {
-        return maintenanceData.get(key);
+    public Map<ResponseLanguageExceptionType, ExceptionHandlingModelResponse> findAllByMessageKey(String messageKey) {
+        return cache.getOrDefault(messageKey, null);
     }
-
-    @Override
-    public ExceptionHandlingModelResponse findResponseExceptionByKeyAndLanguage(String key, ResponseLanguageExceptionType language) {
-        return maintenanceData.getOrDefault(key, null).getOrDefault(language, null);
-    }
-
 }

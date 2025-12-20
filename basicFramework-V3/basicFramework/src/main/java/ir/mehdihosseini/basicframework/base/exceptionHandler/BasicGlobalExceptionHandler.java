@@ -3,6 +3,7 @@ package ir.mehdihosseini.basicframework.base.exceptionHandler;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.exception.AppRunTimeException;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.exception.AppSqlException;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.lang.ResponseMessageDto;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.service.BasicExceptionHandlingMessageService;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicRequestExceptionType;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicInternalSystemExceptionType;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,17 +26,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class BasicGlobalExceptionHandler {
 
-    private final DynamicMessageSource dynamicMessageSource;
+    private final BasicExceptionHandlingMessageService dynamicMessageSource;
 
-    public BasicGlobalExceptionHandler(DynamicMessageSource dynamicMessageSource) {
+    public BasicGlobalExceptionHandler(BasicExceptionHandlingMessageService dynamicMessageSource) {
         this.dynamicMessageSource = dynamicMessageSource;
     }
 
     @ExceptionHandler(AppRunTimeException.class)
     public ResponseEntity<?> HandlerException(AppRunTimeException ex, HttpServletRequest request) {
         BasicSpecificationException error = ex.getError();
-        List<ResponseMessageDto> responseMessage =
-                dynamicMessageSource.getMessageResponse(error.getMessageKey(), ex.getDigits());
+        List<ExceptionHandlingModelResponse> responseMessage =
+                dynamicMessageSource.getMessages(error.getMessageKey(), ex.getDigits());
 
         return buildResponse(BasicExceptionResponse.builder().responseMessage(responseMessage)
                 .code(error.getErrorCode())
@@ -53,7 +54,7 @@ public class BasicGlobalExceptionHandler {
 
         BasicRequestExceptionType isNotValid = BasicRequestExceptionType.ENTERED_VALUE_IS_NOT_VALID;
 
-        List<ResponseMessageDto> responseMessage = dynamicMessageSource.getMessageResponse(isNotValid.getMessageKey(), errorMessage);
+        List<ExceptionHandlingModelResponse> responseMessage = dynamicMessageSource.getMessages(isNotValid.getMessageKey(), errorMessage);
 
         return buildResponse(BasicExceptionResponse.builder().responseMessage(responseMessage)
                 .code(isNotValid.getErrorCode())
@@ -70,8 +71,8 @@ public class BasicGlobalExceptionHandler {
                 .collect(Collectors.joining(", "));
 
         BasicRequestExceptionType isNotValid = BasicRequestExceptionType.ENTERED_VALUE_IS_NOT_VALID;
-        List<ResponseMessageDto> responseMessage = dynamicMessageSource
-                .getMessageResponse(isNotValid.getMessageKey(), digits);
+        List<ExceptionHandlingModelResponse> responseMessage = dynamicMessageSource
+                .getMessages(isNotValid.getMessageKey(), digits);
 
         return buildResponse(BasicExceptionResponse.builder().responseMessage(responseMessage)
                 .code(isNotValid.getErrorCode())
@@ -85,7 +86,7 @@ public class BasicGlobalExceptionHandler {
         AppSqlException appSqlException = AppSqlException.doJob(ex);
         BasicSpecificationException error = appSqlException.getError();
 
-        List<ResponseMessageDto> responseMessage = dynamicMessageSource.getMessageResponse(error.getMessageKey(), (Object) null);
+        List<ExceptionHandlingModelResponse> responseMessage = dynamicMessageSource.getMessages(error.getMessageKey(), (Object) null);
         return buildResponse(BasicExceptionResponse.builder()
                 .responseMessage(responseMessage)
                 .code(error.getErrorCode())
@@ -97,8 +98,8 @@ public class BasicGlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGenericException(Exception ex, HttpServletRequest request) {
         BasicInternalSystemExceptionType internalServerError = BasicInternalSystemExceptionType.INTERNAL_SERVER_ERROR;
-        List<ResponseMessageDto> responseMessage = dynamicMessageSource
-                .getMessageResponse(internalServerError.getMessageKey(), (Object) null);
+        List<ExceptionHandlingModelResponse> responseMessage = dynamicMessageSource
+                .getMessages(internalServerError.getMessageKey(), (Object) null);
 
         return buildResponse(BasicExceptionResponse.builder()
                 .responseMessage(responseMessage)
@@ -113,8 +114,8 @@ public class BasicGlobalExceptionHandler {
 
         BasicRequestExceptionType pageNotFound = BasicRequestExceptionType.PAGE_NOT_FOUND;
 
-        List<ResponseMessageDto> responseMessage = dynamicMessageSource
-                .getMessageResponse(pageNotFound.getMessageKey(), (Object) null);
+        List<ExceptionHandlingModelResponse> responseMessage = dynamicMessageSource
+                .getMessages(pageNotFound.getMessageKey(), (Object) null);
 
         return buildResponse(BasicExceptionResponse.builder()
                 .responseMessage(responseMessage)

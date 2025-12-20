@@ -34,6 +34,15 @@ public enum ResponseLanguageExceptionType {
                 .findFirst();
     }
 
+    public static Optional<ResponseLanguageExceptionType> of(Locale value) {
+        if (value == null) {
+            return Optional.empty();
+        }
+        return Arrays.stream(values())
+                .filter(property -> property.getLocaleLanguage().equals(value))
+                .findFirst();
+    }
+
     public static Locale ofPropertyLocalLang(String lang) {
         if (lang == null) {
             throw new IllegalArgumentException("language is not null for change to local lang. ");

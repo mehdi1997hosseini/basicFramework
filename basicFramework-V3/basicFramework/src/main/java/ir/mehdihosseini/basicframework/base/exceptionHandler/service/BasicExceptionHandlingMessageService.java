@@ -5,14 +5,9 @@ import ir.mehdihosseini.basicframework.base.exceptionHandler.ExceptionHandlingMo
 import java.util.List;
 import java.util.Locale;
 
-public interface BasicResolveExceptionHandlingService {
-
-    ExceptionHandlingModelResponse getMessage(String key, Object... digits);
+public interface BasicExceptionHandlingMessageService {
 
     ExceptionHandlingModelResponse getMessage(String key, Locale locale, Object... digits);
 
     List<ExceptionHandlingModelResponse> getMessages(String key, Object... digits);
-
-    List<ExceptionHandlingModelResponse> getMessages(String key, Locale locale, Object... digits);
-
 }

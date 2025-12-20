@@ -1,6 +1,5 @@
 package ir.mehdihosseini.basicframework.base.exceptionHandler;
 
-import ir.mehdihosseini.basicframework.base.exceptionHandler.lang.ResponseMessageDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -13,7 +12,7 @@ import java.util.List;
 @Builder
 public class BasicExceptionResponse {
 
-    private List<ResponseMessageDto> responseMessage;
+    private List<ExceptionHandlingModelResponse> responseMessage;
     private String code;
     private String detailMessage;
     @Builder.Default

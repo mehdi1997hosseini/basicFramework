@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class ManagerPropertiesConfig {
 
-    private ElasticsearchPropertiesConfig elasticSearch;
-    private RateLimitPropertiesConfig rateLimit;
-    private ExceptionHandlingPropertiesConfig exceptionHandling;
+    private ElasticsearchPropertiesConfig elasticSearch = new ElasticsearchPropertiesConfig();
+    private RateLimitPropertiesConfig rateLimit = new RateLimitPropertiesConfig();
+    private ExceptionHandlingPropertiesConfig exceptionHandling = new ExceptionHandlingPropertiesConfig();
 
 }

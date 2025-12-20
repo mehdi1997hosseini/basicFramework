@@ -10,13 +10,13 @@ public class ExceptionHandlingPropertiesConfig {
 
     private Boolean isEnable = false;
     private ExceptionHandlingType type;
-    private List<ResponseLanguageExceptionType> supportedLangs;
-    private BasedOnFile file;
+    private List<ResponseLanguageExceptionType> supportedLangs = List.of(ResponseLanguageExceptionType.EN);
+    private BasedOnFile file = new BasedOnFile();
 
 //    static class BasedOnDatabase {}
     @Data
     public class BasedOnFile {
-        private String i18nPatternName;
+        private String i18nPatternName = "Error_**";
     }
 
 

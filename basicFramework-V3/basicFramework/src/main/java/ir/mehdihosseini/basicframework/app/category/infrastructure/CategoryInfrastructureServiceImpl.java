@@ -2,6 +2,8 @@ package ir.mehdihosseini.basicframework.app.category.infrastructure;
 
 import ir.mehdihosseini.basicframework.app.category.CategoryEntity;
 import ir.mehdihosseini.basicframework.app.category.repository.CategoryRepository;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.exception.AppRunTimeException;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicInternalSystemExceptionType;
 import ir.mehdihosseini.basicframework.base.infrastructure.db.AbstractRepositoryInfrastructureService;
 import ir.mehdihosseini.basicframework.base.utils.NumberUtils;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,7 @@ public class CategoryInfrastructureServiceImpl extends AbstractRepositoryInfrast
     public CategoryEntity findByCategoryCode(Integer code) {
         CategoryEntity categoryEntity = repository.findCategoryEntityByCategoryCode(code);
         if (categoryEntity == null)
-            throw new RuntimeException("Category code " + code + " not found");
+            throw new AppRunTimeException(BasicInternalSystemExceptionType.INTERNAL_SERVER_ERROR);
 
         return categoryEntity;
     }
