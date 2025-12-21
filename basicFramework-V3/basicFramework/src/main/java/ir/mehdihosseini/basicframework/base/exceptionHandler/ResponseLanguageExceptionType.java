@@ -1,4 +1,4 @@
-package ir.mehdihosseini.basicframework.base.exceptionHandler.lang;
+package ir.mehdihosseini.basicframework.base.exceptionHandler;
 
 import lombok.Getter;
 
@@ -26,27 +26,26 @@ public enum ResponseLanguageExceptionType {
     }
 
     public static Optional<ResponseLanguageExceptionType> of(String value) {
-        if (value == null) {
+        if (value == null)
             return Optional.empty();
-        }
+
         return Arrays.stream(values())
                 .filter(property -> property.language.equals(value.trim()) || property.name().equals(value.trim()))
                 .findFirst();
     }
 
     public static Optional<ResponseLanguageExceptionType> of(Locale value) {
-        if (value == null) {
+        if (value == null)
             return Optional.empty();
-        }
+
         return Arrays.stream(values())
                 .filter(property -> property.getLocaleLanguage().equals(value))
                 .findFirst();
     }
 
     public static Locale ofPropertyLocalLang(String lang) {
-        if (lang == null) {
+        if (lang == null)
             throw new IllegalArgumentException("language is not null for change to local lang. ");
-        }
 
         return Arrays.stream(values())
                 .filter(val -> val.language.equalsIgnoreCase(lang) || val.name().equalsIgnoreCase(lang))

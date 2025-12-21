@@ -10,13 +10,13 @@ import java.io.Serializable;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ExceptionHandlingModelResponse implements Serializable {
+public class ExceptionMessageModel implements Serializable {
     private String message;
     private String statusCode;
     private String language;
 
-    public ExceptionHandlingModelResponse(String message, String statusCode) {
+    public ExceptionMessageModel(String message, String language) {
         this.message = message;
-        this.statusCode = statusCode;
+        this.language = language;
     }
 }

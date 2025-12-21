@@ -1,7 +1,7 @@
 package ir.mehdihosseini.basicframework.base.exceptionHandler.database.entity;
 
 import ir.mehdihosseini.basicframework.base.entity.BasicEntity;
-import ir.mehdihosseini.basicframework.base.exceptionHandler.lang.ResponseLanguageExceptionType;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.ResponseLanguageExceptionType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;

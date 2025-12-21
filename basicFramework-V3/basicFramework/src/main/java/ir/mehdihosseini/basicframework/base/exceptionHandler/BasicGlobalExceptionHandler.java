@@ -2,14 +2,15 @@ package ir.mehdihosseini.basicframework.base.exceptionHandler;
 
 import ir.mehdihosseini.basicframework.base.exceptionHandler.exception.AppRunTimeException;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.exception.AppSqlException;
-import ir.mehdihosseini.basicframework.base.exceptionHandler.lang.ResponseMessageDto;
-import ir.mehdihosseini.basicframework.base.exceptionHandler.service.BasicExceptionHandlingMessageService;
-import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicRequestExceptionType;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.exception.DatabaseExceptionUtilities;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.service.BasicExceptionMessageService;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicInternalSystemExceptionType;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicRequestExceptionType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,19 +28,59 @@ import java.util.stream.Collectors;
 @Slf4j
 public class BasicGlobalExceptionHandler {
 
-    private final BasicExceptionHandlingMessageService dynamicMessageSource;
+    private final BasicExceptionMessageService dynamicMessageSource;
+    private final DatabaseExceptionUtilities databaseExceptionUtilities;
+    private final DataSource dataSource;
 
-    public BasicGlobalExceptionHandler(BasicExceptionHandlingMessageService dynamicMessageSource) {
+    public BasicGlobalExceptionHandler(BasicExceptionMessageService dynamicMessageSource, DatabaseExceptionUtilities databaseExceptionUtilities, DataSource dataSource) {
         this.dynamicMessageSource = dynamicMessageSource;
+        this.databaseExceptionUtilities = databaseExceptionUtilities;
+        this.dataSource = dataSource;
     }
+
+    private void executeStatement(String sql) {
+        try {
+            dataSource.getConnection().createStatement().execute(sql);
+        } catch (SQLException e) {
+            handleDatabaseException(e);
+        } catch (Exception e) {
+            if (ExceptionUtils.hasCause(e, SQLException.class)) {
+                Throwable sqlException = ExceptionUtils.getThrowableList(e).get(ExceptionUtils.indexOfType(e, SQLException.class));
+                handleDatabaseException((SQLException) sqlException);
+            }
+        }
+    }
+
+    protected void handleDatabaseException(SQLException exception)
+    {
+        if (databaseExceptionUtilities.isExceptionBadGrammerSQL(exception))
+            System.out.println("Bad Grammar Exception: " + exception.toString());
+
+        else if (databaseExceptionUtilities.isExceptionADuplicate(exception))
+            System.out.println("Duplicate Exception: " + exception.toString());
+
+        else if (databaseExceptionUtilities.isExceptionADeadlock(exception))
+            System.out.println("Deadlock Exception: " + exception.toString());
+
+        else if (databaseExceptionUtilities.isExceptionADataIntegrityViolation(exception))
+            System.out.println("Data Integrity Violation Exception: " + exception.toString());
+
+    }
+
 
     @ExceptionHandler(AppRunTimeException.class)
     public ResponseEntity<?> HandlerException(AppRunTimeException ex, HttpServletRequest request) {
         BasicSpecificationException error = ex.getError();
-        List<ExceptionHandlingModelResponse> responseMessage =
+        List<ExceptionMessageModel> responseMessage =
                 dynamicMessageSource.getMessages(error.getMessageKey(), ex.getDigits());
 
-        return buildResponse(BasicExceptionResponse.builder().responseMessage(responseMessage)
+        responseMessage.forEach(entity -> {
+            if (entity.getStatusCode().isBlank())
+                entity.setStatusCode(error.getErrorCode());
+
+        });
+
+        return buildResponse(BasicExceptionResponse.builder().exceptionMessage(responseMessage)
                 .code(error.getErrorCode())
                 .detailMessage(ex.getDetail())
                 .instanceURI(request.getRequestURI())
@@ -54,9 +96,15 @@ public class BasicGlobalExceptionHandler {
 
         BasicRequestExceptionType isNotValid = BasicRequestExceptionType.ENTERED_VALUE_IS_NOT_VALID;
 
-        List<ExceptionHandlingModelResponse> responseMessage = dynamicMessageSource.getMessages(isNotValid.getMessageKey(), errorMessage);
+        List<ExceptionMessageModel> responseMessage = dynamicMessageSource.getMessages(isNotValid.getMessageKey(), errorMessage);
 
-        return buildResponse(BasicExceptionResponse.builder().responseMessage(responseMessage)
+        responseMessage.forEach(entity -> {
+            if (entity.getStatusCode().isBlank())
+                entity.setStatusCode(isNotValid.getErrorCode());
+
+        });
+
+        return buildResponse(BasicExceptionResponse.builder().exceptionMessage(responseMessage)
                 .code(isNotValid.getErrorCode())
                 .detailMessage(ex.getBody().getDetail())
                 .instanceURI(request.getRequestURI())
@@ -71,38 +119,61 @@ public class BasicGlobalExceptionHandler {
                 .collect(Collectors.joining(", "));
 
         BasicRequestExceptionType isNotValid = BasicRequestExceptionType.ENTERED_VALUE_IS_NOT_VALID;
-        List<ExceptionHandlingModelResponse> responseMessage = dynamicMessageSource
+        List<ExceptionMessageModel> responseMessage = dynamicMessageSource
                 .getMessages(isNotValid.getMessageKey(), digits);
 
-        return buildResponse(BasicExceptionResponse.builder().responseMessage(responseMessage)
+        responseMessage.forEach(entity -> {
+            if (entity.getStatusCode().isBlank())
+                entity.setStatusCode(isNotValid.getErrorCode());
+
+        });
+
+        return buildResponse(BasicExceptionResponse.builder().exceptionMessage(responseMessage)
                 .code(isNotValid.getErrorCode())
                 .detailMessage(ex.getMessage())
                 .instanceURI(request.getRequestURI())
                 .build(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(SQLException.class)
-    protected ResponseEntity<Object> handleSQLExceptions(SQLException ex, HttpServletRequest request) {
-        AppSqlException appSqlException = AppSqlException.doJob(ex);
-        BasicSpecificationException error = appSqlException.getError();
+    @ExceptionHandler(AppSqlException.class)
+    protected ResponseEntity<Object> handleSQLExceptions(AppSqlException ex, HttpServletRequest request) {
+        BasicSpecificationException error = ex.getError();
 
-        List<ExceptionHandlingModelResponse> responseMessage = dynamicMessageSource.getMessages(error.getMessageKey(), (Object) null);
+        List<ExceptionMessageModel> responseMessage = dynamicMessageSource.getMessages(error.getMessageKey(), (Object) null);
+        responseMessage.forEach(entity -> {
+            if (entity.getStatusCode().isBlank())
+                entity.setStatusCode(error.getErrorCode());
+
+        });
+
         return buildResponse(BasicExceptionResponse.builder()
-                .responseMessage(responseMessage)
+                .exceptionMessage(responseMessage)
                 .code(error.getErrorCode())
-                .detailMessage(appSqlException.getDetail())
+                .detailMessage(ex.getDetail())
                 .instanceURI(request.getRequestURI())
-                .build(), appSqlException.getHttpStatus());
+                .build(), ex.getHttpStatus());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGenericException(Exception ex, HttpServletRequest request) {
+
+        if (ExceptionUtils.hasCause(ex, SQLException.class)) {
+            Throwable sqlException = ExceptionUtils.getThrowableList(ex).get(ExceptionUtils.indexOfType(ex, SQLException.class));
+            handleDatabaseException((SQLException) sqlException);
+        }
+
         BasicInternalSystemExceptionType internalServerError = BasicInternalSystemExceptionType.INTERNAL_SERVER_ERROR;
-        List<ExceptionHandlingModelResponse> responseMessage = dynamicMessageSource
+        List<ExceptionMessageModel> responseMessage = dynamicMessageSource
                 .getMessages(internalServerError.getMessageKey(), (Object) null);
 
+        responseMessage.forEach(entity -> {
+            if (entity.getStatusCode().isBlank())
+                entity.setStatusCode(internalServerError.getErrorCode());
+
+        });
+
         return buildResponse(BasicExceptionResponse.builder()
-                .responseMessage(responseMessage)
+                .exceptionMessage(responseMessage)
                 .code(internalServerError.getErrorCode())
                 .detailMessage(ex.getMessage())
                 .instanceURI(request.getRequestURI())
@@ -114,11 +185,17 @@ public class BasicGlobalExceptionHandler {
 
         BasicRequestExceptionType pageNotFound = BasicRequestExceptionType.PAGE_NOT_FOUND;
 
-        List<ExceptionHandlingModelResponse> responseMessage = dynamicMessageSource
+        List<ExceptionMessageModel> responseMessage = dynamicMessageSource
                 .getMessages(pageNotFound.getMessageKey(), (Object) null);
 
+        responseMessage.forEach(entity -> {
+            if (entity.getStatusCode().isBlank())
+                entity.setStatusCode(pageNotFound.getErrorCode());
+
+        });
+
         return buildResponse(BasicExceptionResponse.builder()
-                .responseMessage(responseMessage)
+                .exceptionMessage(responseMessage)
                 .code(pageNotFound.getErrorCode())
                 .detailMessage(ex.getBody().getDetail())
                 .instanceURI(request.getRequestURI())

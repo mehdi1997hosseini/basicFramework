@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 public class BasicExceptionResponse {
 
-    private List<ExceptionHandlingModelResponse> responseMessage;
+    private List<ExceptionMessageModel> exceptionMessage;
     private String code;
     private String detailMessage;
     @Builder.Default

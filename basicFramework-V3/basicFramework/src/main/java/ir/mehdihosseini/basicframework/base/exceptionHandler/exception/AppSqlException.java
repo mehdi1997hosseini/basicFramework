@@ -1,25 +1,25 @@
 package ir.mehdihosseini.basicframework.base.exceptionHandler.exception;
 
 import ir.mehdihosseini.basicframework.base.exceptionHandler.BasicSpecificationException;
-import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicSqlExceptionType;
+import jakarta.annotation.Nullable;
 import lombok.Getter;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
-
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @Getter
-public class AppSqlException {
-
-    private static final String DUPLICATE_VALUE = "23505";
+public class AppSqlException extends DataAccessException {
 
     private final BasicSpecificationException error;
     private String detail;
     private HttpStatus httpStatus;
     private Object[] digits;
+
+    public AppSqlException(@Nullable String msg, @Nullable Throwable cause, BasicSpecificationException error) {
+        super(msg, cause);
+        this.error = error;
+    }
 
     public AppSqlException(BasicSpecificationException error) {
         this(error, null, BAD_REQUEST, (Object) null);
@@ -34,22 +34,11 @@ public class AppSqlException {
     }
 
     public AppSqlException(BasicSpecificationException error, String detail, HttpStatus httpStatus, Object... digits) {
+        super(error.getMessageKey());
         this.error = error;
         this.detail = detail;
         this.httpStatus = httpStatus;
         this.digits = digits;
-    }
-
-    public static AppSqlException doJob(SQLException exception) {
-        if (exception.getSQLState().equals(DUPLICATE_VALUE))
-            return new AppSqlException(BasicSqlExceptionType.SQL_DUPLICATE_DATA, getSqlExceptionMessageDetails(exception.getMessage()), BAD_REQUEST);
-        else
-            return new AppSqlException(BasicSqlExceptionType.SQL_EXCEPTION, getSqlExceptionMessageDetails(exception.getMessage()), BAD_REQUEST);
-    }
-
-    private static String getSqlExceptionMessageDetails(String message) {
-        List<String> list = Arrays.stream(message.split("\n")).toList();
-        return list.get(list.size() - 1);
     }
 
 }

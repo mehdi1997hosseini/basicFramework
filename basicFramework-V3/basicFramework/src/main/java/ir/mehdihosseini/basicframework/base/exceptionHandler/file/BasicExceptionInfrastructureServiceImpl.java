@@ -1,10 +1,10 @@
 package ir.mehdihosseini.basicframework.base.exceptionHandler.file;
 
 import ir.mehdihosseini.basicframework.base.config.properties.ManagerPropertiesConfig;
-import ir.mehdihosseini.basicframework.base.exceptionHandler.ExceptionHandlingModelResponse;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.ExceptionMessageModel;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.ResponseLanguageExceptionType;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.exception.AppRunTimeException;
-import ir.mehdihosseini.basicframework.base.exceptionHandler.infrastrucure.BasicExceptionHandlingInfrastructureService;
-import ir.mehdihosseini.basicframework.base.exceptionHandler.lang.ResponseLanguageExceptionType;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.infrastrucure.BasicExceptionInfrastructureService;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicInternalSystemExceptionType;
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -23,12 +23,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @ConditionalOnProperty(prefix = "manager.exception-handling", name = "type", havingValue = "PROPERTIES_FILE")
-public class BasicExceptionHandlingInfrastructureServiceImpl implements BasicExceptionHandlingInfrastructureService {
+public class BasicExceptionInfrastructureServiceImpl implements BasicExceptionInfrastructureService {
 
-    private final Map<String, Map<ResponseLanguageExceptionType, ExceptionHandlingModelResponse>> cache = new ConcurrentHashMap<>();
+    private final Map<String, Map<ResponseLanguageExceptionType, ExceptionMessageModel>> cache = new ConcurrentHashMap<>();
     private final ManagerPropertiesConfig managerPropertiesConfig;
 
-    public BasicExceptionHandlingInfrastructureServiceImpl(ManagerPropertiesConfig managerPropertiesConfig) {
+    public BasicExceptionInfrastructureServiceImpl(ManagerPropertiesConfig managerPropertiesConfig) {
         this.managerPropertiesConfig = managerPropertiesConfig;
     }
 
@@ -56,9 +56,9 @@ public class BasicExceptionHandlingInfrastructureServiceImpl implements BasicExc
                 String value = props.getProperty(key);
                 cache.compute(key, (k, v) -> {
                     if (v == null) {
-                        Map<ResponseLanguageExceptionType, ExceptionHandlingModelResponse> map = new HashMap<>();
+                        Map<ResponseLanguageExceptionType, ExceptionMessageModel> map = new HashMap<>();
                         // change and add language to the object
-                        map.put(localLang, new ExceptionHandlingModelResponse(value, key,localLang.getLanguage()));
+                        map.put(localLang, new ExceptionMessageModel(value, localLang.getLanguage()));
                         return map;
                     } else {
                         if (v.containsKey(localLang)) {
@@ -68,7 +68,7 @@ public class BasicExceptionHandlingInfrastructureServiceImpl implements BasicExc
                             arr[2] = filename;
                             throw new AppRunTimeException(BasicInternalSystemExceptionType.EXCEPTION_HANDLING_MESSAGE_KEY_IS_DUPLICATED, arr);
                         }
-                        v.put(localLang, new ExceptionHandlingModelResponse(value, key , localLang.getLanguage()));
+                        v.put(localLang, new ExceptionMessageModel(value, localLang.getLanguage()));
                         return v;
                     }
                 });
@@ -88,7 +88,7 @@ public class BasicExceptionHandlingInfrastructureServiceImpl implements BasicExc
     }
 
     @Override
-    public Map<ResponseLanguageExceptionType, ExceptionHandlingModelResponse> findAllByMessageKey(String messageKey) {
+    public Map<ResponseLanguageExceptionType, ExceptionMessageModel> findAllByMessageKey(String messageKey) {
         return cache.getOrDefault(messageKey, null);
     }
 }

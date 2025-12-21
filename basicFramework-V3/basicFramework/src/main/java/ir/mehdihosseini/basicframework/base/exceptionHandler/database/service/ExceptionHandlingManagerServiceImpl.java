@@ -1,10 +1,10 @@
 package ir.mehdihosseini.basicframework.base.exceptionHandler.database.service;
 
+import ir.mehdihosseini.basicframework.base.exceptionHandler.ResponseLanguageExceptionType;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.database.entity.ExceptionManagerEntity;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.database.entity.ExceptionMessageEntity;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.database.entity.dto.ExceptionHandlingManagerDto;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.database.infrastructure.ExceptionHandlingManagerInfrastructureService;
-import ir.mehdihosseini.basicframework.base.exceptionHandler.lang.ResponseLanguageExceptionType;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +29,9 @@ public class ExceptionHandlingManagerServiceImpl implements ExceptionHandlingMan
         messageEntity.setCode(code);
         messageEntity.setLanguage(ResponseLanguageExceptionType.of(dto.getLanguage()).get());
         messageEntity.setMessage(dto.getMessage());
-        return infrastructure.addExceptionMessage(messageEntity);
+        infrastructure.addExceptionMessage(messageEntity);
+        infrastructure.addExceptionInCache(managerEntity.getMessageKey(), messageEntity);
+        return code;
     }
 
 }
