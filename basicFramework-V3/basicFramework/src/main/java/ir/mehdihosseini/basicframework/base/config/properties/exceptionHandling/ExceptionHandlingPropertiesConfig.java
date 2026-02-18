@@ -1,6 +1,6 @@
 package ir.mehdihosseini.basicframework.base.config.properties.exceptionHandling;
 
-import ir.mehdihosseini.basicframework.base.exceptionHandler.lang.ResponseLanguageExceptionType;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.ResponseLanguageExceptionType;
 import lombok.Data;
 
 import java.util.List;

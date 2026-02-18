@@ -3,14 +3,14 @@ package ir.mehdihosseini.basicframework.base.config.core;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import ir.mehdihosseini.basicframework.base.exceptionHandler.lang.ExceptionLanguagePropertiesConfig;
+
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-@EnableConfigurationProperties(value = {ExceptionLanguagePropertiesConfig.class})
+//@EnableConfigurationProperties(value = {ExceptionLanguagePropertiesConfig.class})
 public class CoreConfig {
 
     @Bean

@@ -189,7 +189,7 @@ public class BasicGlobalExceptionHandler {
                 .getMessages(pageNotFound.getMessageKey(), (Object) null);
 
         responseMessage.forEach(entity -> {
-            if (entity.getStatusCode().isBlank())
+            if (entity.getStatusCode() == null)
                 entity.setStatusCode(pageNotFound.getErrorCode());
 
         });
