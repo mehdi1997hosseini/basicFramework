@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@ConditionalOnProperty(prefix = "elt.manager.config" , name = "is-active" ,havingValue = "true")
+@ConditionalOnProperty(prefix = "manager.elastic-search.trace.input-request", name = "isEnable", havingValue = "true")
 public interface RequestElasticRepository extends ElasticsearchRepository<RequestElasticEntity, String> {
 
 }

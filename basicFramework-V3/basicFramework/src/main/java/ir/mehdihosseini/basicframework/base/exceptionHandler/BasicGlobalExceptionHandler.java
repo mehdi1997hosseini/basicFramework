@@ -6,6 +6,7 @@ import ir.mehdihosseini.basicframework.base.exceptionHandler.exception.DatabaseE
 import ir.mehdihosseini.basicframework.base.exceptionHandler.service.BasicExceptionMessageService;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicInternalSystemExceptionType;
 import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicRequestExceptionType;
+import ir.mehdihosseini.basicframework.base.exceptionHandler.type.BasicSecurityExceptionType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -14,12 +15,14 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.sql.DataSource;
+import java.nio.file.AccessDeniedException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,8 +54,7 @@ public class BasicGlobalExceptionHandler {
         }
     }
 
-    protected void handleDatabaseException(SQLException exception)
-    {
+    protected void handleDatabaseException(SQLException exception) {
         if (databaseExceptionUtilities.isExceptionBadGrammerSQL(exception))
             System.out.println("Bad Grammar Exception: " + exception.toString());
 
@@ -75,7 +77,7 @@ public class BasicGlobalExceptionHandler {
                 dynamicMessageSource.getMessages(error.getMessageKey(), ex.getDigits());
 
         responseMessage.forEach(entity -> {
-            if (entity.getStatusCode().isBlank())
+            if (entity.getStatusCode() == null)
                 entity.setStatusCode(error.getErrorCode());
 
         });
@@ -99,7 +101,7 @@ public class BasicGlobalExceptionHandler {
         List<ExceptionMessageModel> responseMessage = dynamicMessageSource.getMessages(isNotValid.getMessageKey(), errorMessage);
 
         responseMessage.forEach(entity -> {
-            if (entity.getStatusCode().isBlank())
+            if (entity.getStatusCode() == null)
                 entity.setStatusCode(isNotValid.getErrorCode());
 
         });
@@ -123,7 +125,7 @@ public class BasicGlobalExceptionHandler {
                 .getMessages(isNotValid.getMessageKey(), digits);
 
         responseMessage.forEach(entity -> {
-            if (entity.getStatusCode().isBlank())
+            if (entity.getStatusCode() == null)
                 entity.setStatusCode(isNotValid.getErrorCode());
 
         });
@@ -200,6 +202,50 @@ public class BasicGlobalExceptionHandler {
                 .detailMessage(ex.getBody().getDetail())
                 .instanceURI(request.getRequestURI())
                 .build(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AuthenticationServiceException.class)
+    public ResponseEntity<?> handlerUnauthorized(AuthenticationServiceException ex, HttpServletRequest request) {
+
+        BasicSecurityExceptionType unauthorized = BasicSecurityExceptionType.UNAUTHORIZED;
+
+        List<ExceptionMessageModel> responseMessage = dynamicMessageSource
+                .getMessages(unauthorized.getMessageKey(), (Object) null);
+
+        responseMessage.forEach(entity -> {
+            if (entity.getStatusCode() == null)
+                entity.setStatusCode(unauthorized.getErrorCode());
+
+        });
+
+        return buildResponse(BasicExceptionResponse.builder()
+                .exceptionMessage(responseMessage)
+                .code(unauthorized.getErrorCode())
+                .detailMessage(ex.getMessage())
+                .instanceURI(request.getRequestURI())
+                .build(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> accessDeniedException(AccessDeniedException ex, HttpServletRequest request) {
+
+        BasicSecurityExceptionType accessDenied = BasicSecurityExceptionType.ACCESS_DENIED;
+
+        List<ExceptionMessageModel> responseMessage = dynamicMessageSource
+                .getMessages(accessDenied.getMessageKey(), (Object) null);
+
+        responseMessage.forEach(entity -> {
+            if (entity.getStatusCode() == null)
+                entity.setStatusCode(accessDenied.getErrorCode());
+
+        });
+
+        return buildResponse(BasicExceptionResponse.builder()
+                .exceptionMessage(responseMessage)
+                .code(accessDenied.getErrorCode())
+                .detailMessage(ex.getMessage())
+                .instanceURI(request.getRequestURI())
+                .build(), HttpStatus.FORBIDDEN);
     }
 
     private ResponseEntity<Object> buildResponse(BasicExceptionResponse responseException, HttpStatus status) {

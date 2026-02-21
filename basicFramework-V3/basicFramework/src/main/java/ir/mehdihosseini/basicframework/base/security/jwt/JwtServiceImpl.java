@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import ir.mehdihosseini.basicframework.base.security.entity.dto.UserLoginAcceptResponseDto;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@ConditionalOnProperty(prefix = "manager.security" , name = "enable" , havingValue = "true")
 public class JwtServiceImpl implements JwtService {
 
     private String secretkey = "";
@@ -34,13 +36,12 @@ public class JwtServiceImpl implements JwtService {
     public UserLoginAcceptResponseDto generateToken(UserDetails userDetails) {
         Map<String, Object> claim = new HashMap<>();
         claim.put("roles", userDetails.getAuthorities());
-
-        Date expiration = new Date(System.currentTimeMillis() + 1000 * 60 + 15); // 15 minute
-
+        long timeMillis = System.currentTimeMillis();
+        Date expiration = new Date(timeMillis + 1000 * 60 * 15); // 15 minute
         String token = Jwts.builder()
                 .claims(claim)
                 .subject(userDetails.getUsername())
-                .issuedAt(new Date())
+                .issuedAt(new Date(timeMillis))
                 .expiration(expiration)
                 .signWith(getKey())
                 .compact();
@@ -50,7 +51,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String extractUsername(String token) {
-        return extractClaim(token , Claims::getSubject);
+        return extractClaim(token, Claims::getSubject);
     }
 
     @Override

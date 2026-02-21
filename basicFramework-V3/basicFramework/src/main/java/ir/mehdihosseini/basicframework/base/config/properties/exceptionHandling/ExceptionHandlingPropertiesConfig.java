@@ -2,10 +2,14 @@ package ir.mehdihosseini.basicframework.base.config.properties.exceptionHandling
 
 import ir.mehdihosseini.basicframework.base.exceptionHandler.ResponseLanguageExceptionType;
 import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
 @Data
+@Configuration
+@ConfigurationProperties(prefix = "manager.exception-handling")
 public class ExceptionHandlingPropertiesConfig {
 
     private Boolean isEnable = false;

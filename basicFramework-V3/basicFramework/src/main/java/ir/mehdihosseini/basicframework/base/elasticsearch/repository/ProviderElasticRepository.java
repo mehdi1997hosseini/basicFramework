@@ -6,6 +6,6 @@ import org.springframework.data.elasticsearch.repository.ElasticsearchRepository
 import org.springframework.stereotype.Repository;
 
 @Repository
-@ConditionalOnProperty(prefix = "elt.manager.config" , name = "is-active" ,havingValue = "true")
+@ConditionalOnProperty(prefix = "manager.elastic-search.trace.third-party", name = "isEnable", havingValue = "true")
 public interface ProviderElasticRepository extends ElasticsearchRepository<ProviderElasticEntity, String> {
 }

@@ -1,8 +1,12 @@
 package ir.mehdihosseini.basicframework.base.config.properties.elasticsearch;
 
 import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 @Data
+@Configuration
+@ConfigurationProperties(prefix = "manager.elastic-search")
 public class ElasticsearchPropertiesConfig {
 
     private String host = "localhost";

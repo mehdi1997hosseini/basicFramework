@@ -5,6 +5,7 @@ import ir.mehdihosseini.basicframework.base.utils.RoleType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = "password")
+@ConditionalOnProperty(prefix = "manager.security" , name = "enable" , havingValue = "true")
 public class UserSecurityInfoEntity extends BasicAuditEntity<String> implements UserDetails {
 
     @Getter

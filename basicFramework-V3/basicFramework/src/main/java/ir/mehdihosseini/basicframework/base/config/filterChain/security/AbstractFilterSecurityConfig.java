@@ -1,5 +1,8 @@
 package ir.mehdihosseini.basicframework.base.config.filterChain.security;
 
+import ir.mehdihosseini.basicframework.base.config.filterChain.security.exceptionHandler.AccessDeniedExceptionHandler;
+import ir.mehdihosseini.basicframework.base.config.filterChain.security.exceptionHandler.UnauthorizedExceptionHandler;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,32 +12,45 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@ConditionalOnProperty(prefix = "manager.security", name = "enable", havingValue = "true")
 public class AbstractFilterSecurityConfig {
+
+    private final UnauthorizedExceptionHandler unauthorized;
+    private final AccessDeniedExceptionHandler accessDenied;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public AbstractFilterSecurityConfig(UnauthorizedExceptionHandler unauthorized, AccessDeniedExceptionHandler accessDenied, JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.unauthorized = unauthorized;
+        this.accessDenied = accessDenied;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
         return security
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("**/security/login" , "**/security/registry")
+                        .requestMatchers("/security/login", "/security/registry", "/logout")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorized)
+//                        .accessDeniedHandler(accessDenied))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
 //        return Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
 //        return Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8();

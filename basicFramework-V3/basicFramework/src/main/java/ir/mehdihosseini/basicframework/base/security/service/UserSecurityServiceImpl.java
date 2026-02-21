@@ -10,6 +10,7 @@ import ir.mehdihosseini.basicframework.base.security.jwt.JwtService;
 import ir.mehdihosseini.basicframework.base.security.jwt.JwtServiceImpl;
 import ir.mehdihosseini.basicframework.base.security.repository.UserSecurityRepository;
 import ir.mehdihosseini.basicframework.base.utils.RoleType;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.Set;
 
 @Service
+@ConditionalOnProperty(prefix = "manager.security" , name = "enable" , havingValue = "true")
 public class UserSecurityServiceImpl implements UserSecurityService {
 
     private final AuthenticationManager authenticationManager;

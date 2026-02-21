@@ -4,6 +4,7 @@ import ir.mehdihosseini.basicframework.base.exceptionHandler.BasicSpecificationE
 
 public enum BasicSecurityExceptionType implements BasicSpecificationException {
     UNAUTHORIZED("error.unauthorized", "401"),
+    ACCESS_DENIED("error.access-denied", "4003"),
     AUTHENTICATION("error.authentication-failed", "403"),
     AUTHENTICATION_FAILED("error.user-not-found", "4001"),
     REGISTRY_USER_DUPLICATED("error.username-is-exist","4002"),
