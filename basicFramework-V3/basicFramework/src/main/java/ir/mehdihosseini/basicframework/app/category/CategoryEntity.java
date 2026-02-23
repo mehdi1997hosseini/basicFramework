@@ -1,6 +1,6 @@
 package ir.mehdihosseini.basicframework.app.category;
 
-import ir.mehdihosseini.basicframework.base.entity.BasicAuditEntity;
+import ir.mehdihosseini.basicframework.base.entity.audit.BasicAuditEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

@@ -1,18 +1,18 @@
-package ir.mehdihosseini.basicframework.base.entity;
+package ir.mehdihosseini.basicframework.base.entity.audit;
 
+import ir.mehdihosseini.basicframework.base.entity.BasicEntity;
 import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Version;
 import lombok.*;
-import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * -----------------------------------------------------------------------------
@@ -20,24 +20,24 @@ import java.util.Objects;
  * BasicAuditableEntity extends BasicEntity and adds auditing capabilities
  * including createdBy, createdAt, updatedBy, updatedAt, deletedBy, and deletedAt.
  * It also includes versioning for optimistic locking.
- *<p>
+ * <p>
  * Type Parameter:
  * - ID: The type of the primary key
- *<p>
+ * <p>
  * Features:
  * - Tracks who created, updated, and deleted the entity
  * - Uses Hibernate annotations like @CreationTimestamp and @UpdateTimestamp
  * - Supports optimistic locking with @Version
  * <p>
  * -----------------------------------------------------------------------------
- *<p> فارسی:</p>
+ * <p> فارسی:</p>
  * این کلاس از BasicEntity ارث‌بری می‌کند و قابلیت‌های مربوط به لاگ‌گیری و ممیزی (Auditing) را به آن اضافه می‌نماید؛
  * از جمله فیلدهای createdBy، createdAt، updatedBy، updatedAt، deletedBy، و deletedAt.
  * همچنین از نسخه‌بندی (versioning) برای پیاده‌سازی optimistic locking پشتیبانی می‌کند.
- *<p>
+ * <p>
  * پارامتر نوعی:
  * - ID: نوع کلید اصلی موجودیت
- *<p>
+ * <p>
  * قابلیت‌ها:
  * - ثبت اطلاعات مربوط به ایجاد، به‌روزرسانی و حذف داده‌ها
  * - استفاده از انوتیشن‌های Hibernate برای زمان‌بندی
@@ -51,10 +51,11 @@ import java.util.Objects;
 @NoArgsConstructor
 @ToString
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public class BasicAuditEntity<ID> extends BasicEntity<ID> {
 
     @CreatedBy
-    @Column(name = "created_by")
+    @Column(name = "created_by", updatable = false)
     private String createdBy;
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -74,7 +75,6 @@ public class BasicAuditEntity<ID> extends BasicEntity<ID> {
     @Version
     private Integer version;
 
-    @PreUpdate
     /**
      * -----------------------------------------------------------------------------
      * <p>English:</p>
@@ -95,30 +95,31 @@ public class BasicAuditEntity<ID> extends BasicEntity<ID> {
      * <p>
      * -----------------------------------------------------------------------------
      */
-    public void beforeAnyUpdate() {
-        if (getIsDelete() != null && getIsDelete()) {
+//    @PreUpdate
+//    public void beforeAnyUpdate() {
+//        if (getIsDelete() != null && getIsDelete()) {
+//
+//            if (deletedBy == null) {
+//                // TODO:: complete later with security
+//                deletedBy = "mehdi";
+//            }
+//
+//            if (getDeletedAt() == null) {
+//                deletedAt = new Date();
+//            }
+//        }
+//    }
 
-            if (deletedBy == null) {
-                // TODO:: complete later with security
-                deletedBy = "mehdi";
-            }
-
-            if (getDeletedAt() == null) {
-                deletedAt = new Date();
-            }
-        }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        BasicAuditEntity<?> that = (BasicAuditEntity<?>) o;
-        return getId() != null && Objects.equals(getId(), that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+//        BasicAuditEntity<?> that = (BasicAuditEntity<?>) o;
+//        return getId() != null && Objects.equals(getId(), that.getId());
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return getClass().hashCode();
+//    }
 }

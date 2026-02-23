@@ -26,6 +26,11 @@ public class AbstractFilterSecurityConfig {
     private final AccessDeniedExceptionHandler accessDenied;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    private static final String[] WHITE_LIST_URL = {"/api/v1/auth/**", "/v2/api-docs", "/v3/api-docs",
+            "/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/configuration/ui",
+            "/configuration/security", "/swagger/**", "/swagger-ui/**", "/swagger", "/api/auth/**",
+            "/api/test/**","/api-docs/**", "/authenticate", "/security/**", "/logout"};
+
     public AbstractFilterSecurityConfig(UnauthorizedExceptionHandler unauthorized, AccessDeniedExceptionHandler accessDenied, JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.unauthorized = unauthorized;
         this.accessDenied = accessDenied;
@@ -37,14 +42,14 @@ public class AbstractFilterSecurityConfig {
         return security
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/security/login", "/security/registry", "/logout")
+                        .requestMatchers(WHITE_LIST_URL)
                         .permitAll()
                         .anyRequest()
                         .authenticated())
-                .httpBasic(Customizer.withDefaults())
+//                .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorized)
-//                        .accessDeniedHandler(accessDenied))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorized)
+                        .accessDeniedHandler(accessDenied))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

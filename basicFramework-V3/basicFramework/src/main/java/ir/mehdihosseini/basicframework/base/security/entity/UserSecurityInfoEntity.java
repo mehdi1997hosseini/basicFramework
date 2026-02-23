@@ -1,6 +1,6 @@
 package ir.mehdihosseini.basicframework.base.security.entity;
 
-import ir.mehdihosseini.basicframework.base.entity.BasicAuditEntity;
+import ir.mehdihosseini.basicframework.base.entity.audit.BasicAuditEntity;
 import ir.mehdihosseini.basicframework.base.utils.RoleType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -11,7 +11,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 @Entity
